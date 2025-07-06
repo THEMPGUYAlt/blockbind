@@ -82,11 +82,20 @@ public class BlockBindBukkitPlugin extends JavaPlugin {
         // Attempt to find a matching platform adapter
         this.adapter = PlatformChooser.choose();
         if (this.adapter == null) {
-            this.getLogger().severe("Unsupported server version");
-            this.getPluginLoader().disablePlugin(this);
-            this.shuttingDown = true;
-            return;
+            this.getLogger().warning("Exact platform adapter not found, attempting to select nearest fallback adapter...");
+            String version = getServer().getBukkitVersion();
+            this.adapter = getFallbackAdapter(version);
+            if (this.adapter == null) {
+                this.getLogger().severe("No suitable adapter found for version: " + version);
+                this.getPluginLoader().disablePlugin(this);
+                this.shuttingDown = true;
+                return;
+            } else {
+                this.getLogger().info("Using fallback adapter for version: " + version +
+                              " -> " + this.adapter.getClass().getSimpleName());
+            }
         }
+
 
         // Let#s identify ourselves before we do anything
         Identity.setIdentity(new BukkitIdentity(this));
