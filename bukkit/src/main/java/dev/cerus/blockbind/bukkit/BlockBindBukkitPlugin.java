@@ -209,5 +209,12 @@ public class BlockBindBukkitPlugin extends JavaPlugin {
     boolean isShuttingDown() {
         return this.shuttingDown;
     }
-
+    private PlatformAdapter getFallbackAdapter(String version) {
+    if (version.startsWith("1.20") || version.startsWith("1.19") || version.startsWith("1.18")) {
+        return new PlatformBukkit18R1();
+    } else if (version.startsWith("1.17") || version.startsWith("1.16") || version.startsWith("1.15")) {
+        return new PlatformBukkit16R3();
+    } else {
+        return null;
+    }
 }
