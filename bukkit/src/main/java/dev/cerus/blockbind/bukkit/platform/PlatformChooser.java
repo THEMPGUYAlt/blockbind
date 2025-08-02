@@ -20,13 +20,24 @@ public class PlatformChooser {
      */
     public static PlatformAdapter choose() {
         String version = Bukkit.getVersion();
-        version = version.substring(version.indexOf("MC: ") + 4, version.lastIndexOf(')'));
 
-        return switch (version) {
-            case "1.16.5" -> new PlatformAdapter16R3();
-            case "1.18" -> new PlatformAdapter18R1();
-            default -> null;
-        };
+        try {
+            // Extract "MC: x.y.z" or "MC: x.y"
+            version = version.substring(version.indexOf("MC: ") + 4, version.lastIndexOf(')'));
+        } catch (Exception e) {
+            // Fallback
+            version = "unknown";
+        }
+
+        // Handle common cases with minor version tolerance
+        if (version.startsWith("1.16")) {
+            return new PlatformAdapter16R3();
+        } else if (version.startsWith("1.18")) {
+            return new PlatformAdapter18R1();
+        }
+
+        // Unsupported
+        return null;
     }
 
 }
